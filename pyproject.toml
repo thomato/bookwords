@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "bookwords"
+version = "0.1.0"
+description = ""
+authors = ["Nando Thomassen <nando@thomassen.pro>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = "^0.115.5"
+uvicorn = "^0.32.1"
+ebooklib = "^0.18"
+beautifulsoup4 = "^4.12.3"
+coverage = "^7.6.8"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
