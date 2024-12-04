@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from ebooklib import ITEM_DOCUMENT, epub
 
@@ -9,7 +9,7 @@ from src.utils.exceptions import BookProcessingError
 
 
 class EPUBReader:
-    def __init__(self, html_parser: HTMLParser = None):
+    def __init__(self, html_parser: Optional[HTMLParser] = None):
         self.html_parser = html_parser or BeautifulSoupHTMLParser()
 
     @staticmethod
