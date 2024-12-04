@@ -1,4 +1,39 @@
 repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+    -   id: check-added-large-files
+    -   id: check-ast
+    -   id: check-case-conflict
+    -   id: check-docstring-first
+    -   id: check-merge-conflict
+        stages: [pre-merge-commit]
+    -   id: check-toml
+    -   id: debug-statements
+        stages: [pre-push]
+    -   id: end-of-file-fixer
+    -   id: trailing-whitespace
+
+-   repo: https://github.com/PyCQA/isort
+    rev: 5.13.2
+    hooks:
+    -   id: isort
+
+-   repo: https://github.com/psf/black
+    rev: 24.10.0
+    hooks:
+    -   id: black
+        language_version: python3
+        args: [--line-length=80]
+        types: [python]
+
+-   repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.8.0
+    hooks:
+    -   id: mypy
+        additional_dependencies:
+            - types-beautifulsoup4
+
 -   repo: local
     hooks:
     -   id: pytest-check
@@ -8,20 +43,3 @@ repos:
         pass_filenames: false
         always_run: true
         stages: [pre-commit]
--   repo: https://github.com/psf/black
-    rev: 24.10.0
-    hooks:
-    -   id: black
-        language_version: python3
-        args: [--line-length=80]
-        types: [python]
--   repo: https://github.com/PyCQA/isort
-    rev: 5.13.2
-    hooks:
-    -   id: isort
--   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.8.0
-    hooks:
-    -   id: mypy
-        additional_dependencies:
-            - types-beautifulsoup4
