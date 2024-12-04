@@ -1,6 +1,4 @@
-from unittest.mock import patch
-import pytest
-from src.parsers.html_parsers import BeautifulSoupHTMLParser
+from parsers.html_parsers import BeautifulSoupHTMLParser
 
 
 class TestBeautifulSoupHTMLParser:

@@ -11,10 +11,10 @@ from src.utils.exceptions import BookProcessingError
 
 class MockHTMLParser(HTMLParser):
     def __init__(self, text: str):
-        self.text = text
+        self._text = text
 
     def extract_text(self, html: str) -> str:
-        return self.text
+        return self._text
 
 
 def create_mock_epub():
@@ -71,15 +71,21 @@ class TestEPUBReader:
 
     def test_html_parsing_error(self, monkeypatch):
         # Arrange
-        mock_html_parser = MockHTMLParser("test")
-        mock_html_parser.extract_text = Mock(side_effect=ValueError("Parse error"))
+        class ErrorHTMLParser(HTMLParser):
+            def extract_text(self, html: str) -> str:
+                raise ValueError("Parse error")
 
-        reader = EPUBReader(
-            html_parser=mock_html_parser
-        )
-
-        # Act & Assert
+        reader = EPUBReader(html_parser=ErrorHTMLParser())
         monkeypatch.setattr(epub, 'read_epub', lambda _: create_mock_epub())
-        with pytest.raises(BookProcessingError) as exc:
+
+        # Assert that the original ValueError is caught and wrapped
+        # in a BookProcessingError with the correct message
+        expected_error = None
+        try:
             reader.read(Path("test.epub"))
-        assert "Parse error" in str(exc.value)
+        except Exception as e:
+            expected_error = e
+
+        assert expected_error is not None
+        assert isinstance(expected_error, BookProcessingError)
+        assert str(expected_error) == "Failed to process EPUB file: Parse error"

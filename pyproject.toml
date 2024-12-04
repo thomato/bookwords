@@ -4,6 +4,11 @@ version = "0.1.0"
 description = ""
 authors = ["Nando Thomassen <nando@thomassen.pro>"]
 readme = "README.md"
+packages = [{include = "src"}]  # Add this line
+
+[tool.pytest.ini_options]
+pythonpath = [".", "src"]  # Update this line
+testpaths = ["tests"]      # Add this line
 
 [tool.poetry.dependencies]
 python = "^3.9"
@@ -13,7 +18,6 @@ ebooklib = "^0.18"
 beautifulsoup4 = "^4.12.3"
 coverage = "^7.6.8"
 pre-commit = "^4.0.1"
-
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
