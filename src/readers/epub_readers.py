@@ -1,9 +1,10 @@
 from pathlib import Path
 from typing import List
-from ebooklib import epub, ITEM_DOCUMENT
+
+from ebooklib import ITEM_DOCUMENT, epub
 
 from src.models.book import Book
-from src.parsers.html_parsers import HTMLParser, BeautifulSoupHTMLParser
+from src.parsers.html_parsers import BeautifulSoupHTMLParser, HTMLParser
 from src.utils.exceptions import BookProcessingError
 
 

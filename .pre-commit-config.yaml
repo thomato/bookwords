@@ -15,3 +15,7 @@ repos:
         language_version: python3
         args: [--line-length=80]
         types: [python]
+-   repo: https://github.com/PyCQA/isort
+    rev: 5.13.2
+    hooks:
+    -   id: isort

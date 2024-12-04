@@ -1,7 +1,8 @@
+from pathlib import Path
+from unittest.mock import MagicMock, Mock
+
 import ebooklib
 import pytest
-from pathlib import Path
-from unittest.mock import Mock, MagicMock
 from ebooklib import epub
 
 from src.parsers.html_parsers import HTMLParser
