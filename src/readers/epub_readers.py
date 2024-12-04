@@ -13,7 +13,7 @@ class EPUBReader:
 
     @staticmethod
     def supported_formats() -> List[str]:
-        return ['.epub']
+        return [".epub"]
 
     def read(self, file_path: Path) -> Book:
         try:
@@ -23,19 +23,15 @@ class EPUBReader:
             content = []
             for item in book.get_items():
                 if item.get_type() == ITEM_DOCUMENT:
-                    html_content = item.get_content().decode('utf-8')
+                    html_content = item.get_content().decode("utf-8")
                     text = self.html_parser.extract_text(html_content)
                     content.append(text)
 
             # Extract metadata
-            title = self._get_metadata_safely(book, 'title')
-            author = self._get_metadata_safely(book, 'creator')
+            title = self._get_metadata_safely(book, "title")
+            author = self._get_metadata_safely(book, "creator")
 
-            return Book(
-                title=title,
-                author=author,
-                content=' '.join(content)
-            )
+            return Book(title=title, author=author, content=" ".join(content))
 
         except Exception as e:
             raise BookProcessingError(f"Failed to process EPUB file: {str(e)}")
@@ -44,6 +40,6 @@ class EPUBReader:
     def _get_metadata_safely(book: epub.EpubBook, field: str) -> str:
         """Safely extract metadata with fallback values."""
         try:
-            return book.get_metadata('DC', field)[0][0]
+            return book.get_metadata("DC", field)[0][0]
         except (IndexError, KeyError, AttributeError):
             return f"Unknown {field}"

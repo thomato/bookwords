@@ -6,10 +6,10 @@ class BookProcessingError(Exception):
     """Exception raised when processing a book file fails."""
 
     def __init__(
-            self,
-            message: str,
-            file_path: Optional[Path] = None,
-            original_error: Optional[Exception] = None
+        self,
+        message: str,
+        file_path: Optional[Path] = None,
+        original_error: Optional[Exception] = None,
     ):
         self.file_path = file_path
         self.original_error = original_error

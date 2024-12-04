@@ -19,9 +19,7 @@ class MockHTMLParser(HTMLParser):
 
 def create_mock_epub():
     mock_epub = MagicMock(spec=epub.EpubBook)
-    mock_epub.get_metadata.side_effect = lambda dc, field: [
-        [f"Test {field}"]
-    ]
+    mock_epub.get_metadata.side_effect = lambda dc, field: [[f"Test {field}"]]
     mock_item = MagicMock()
     mock_item.get_type.return_value = ebooklib.ITEM_DOCUMENT
     mock_item.get_content.return_value = b"<html><body>Test content</body></html>"
@@ -31,7 +29,7 @@ def create_mock_epub():
 
 def test_supported_formats():
     reader = EPUBReader()
-    assert '.epub' in reader.supported_formats()
+    assert ".epub" in reader.supported_formats()
 
 
 @pytest.mark.usefixtures("monkeypatch")
@@ -39,12 +37,10 @@ class TestEPUBReader:
     def test_successful_read(self, monkeypatch):
         # Arrange
         mock_html_parser = MockHTMLParser("Parsed content")
-        reader = EPUBReader(
-            html_parser=mock_html_parser
-        )
+        reader = EPUBReader(html_parser=mock_html_parser)
 
         # Act
-        monkeypatch.setattr(epub, 'read_epub', lambda _: create_mock_epub())
+        monkeypatch.setattr(epub, "read_epub", lambda _: create_mock_epub())
         book = reader.read(Path("test.epub"))
 
         # Assert
@@ -57,12 +53,10 @@ class TestEPUBReader:
         mock_epub = create_mock_epub()
         mock_epub.get_metadata.side_effect = IndexError
 
-        reader = EPUBReader(
-            html_parser=MockHTMLParser("test")
-        )
+        reader = EPUBReader(html_parser=MockHTMLParser("test"))
 
         # Act
-        monkeypatch.setattr(epub, 'read_epub', lambda _: mock_epub)
+        monkeypatch.setattr(epub, "read_epub", lambda _: mock_epub)
         book = reader.read(Path("test.epub"))
 
         # Assert
@@ -76,7 +70,7 @@ class TestEPUBReader:
                 raise ValueError("Parse error")
 
         reader = EPUBReader(html_parser=ErrorHTMLParser())
-        monkeypatch.setattr(epub, 'read_epub', lambda _: create_mock_epub())
+        monkeypatch.setattr(epub, "read_epub", lambda _: create_mock_epub())
 
         # Assert that the original ValueError is caught and wrapped
         # in a BookProcessingError with the correct message
