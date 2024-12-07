@@ -5,17 +5,12 @@ import ebooklib
 import pytest
 from ebooklib import epub
 
-from src.file.parsers import HTMLParser
 from src.file.reader import EPUBReader
 from src.utils.exceptions import BookProcessingError
 
 
-class MockHTMLParser(HTMLParser):
-    def __init__(self, text: str):
-        self._text = text
-
-    def extract_text(self, html: str) -> str:
-        return self._text
+def mock_parse_html(html: str) -> str:
+    return "Parsed content"
 
 
 def create_mock_epub():
@@ -39,8 +34,8 @@ def test_supported_formats():
 class TestEPUBReader:
     def test_successful_read(self, monkeypatch):
         # Arrange
-        mock_html_parser = MockHTMLParser("Parsed content")
-        reader = EPUBReader(html_parser=mock_html_parser)
+        reader = EPUBReader()
+        monkeypatch.setattr("src.file.reader.parse_html", mock_parse_html)
 
         # Act
         monkeypatch.setattr(epub, "read_epub", lambda _: create_mock_epub())
@@ -56,7 +51,8 @@ class TestEPUBReader:
         mock_epub = create_mock_epub()
         mock_epub.get_metadata.side_effect = IndexError
 
-        reader = EPUBReader(html_parser=MockHTMLParser("test"))
+        reader = EPUBReader()
+        monkeypatch.setattr("src.file.reader.parse_html", mock_parse_html)
 
         # Act
         monkeypatch.setattr(epub, "read_epub", lambda _: mock_epub)
@@ -68,11 +64,11 @@ class TestEPUBReader:
 
     def test_html_parsing_error(self, monkeypatch):
         # Arrange
-        class ErrorHTMLParser(HTMLParser):
-            def extract_text(self, html: str) -> str:
-                raise ValueError("Parse error")
+        def mock_parse_html_error(html: str) -> str:
+            raise ValueError("Parse error")
 
-        reader = EPUBReader(html_parser=ErrorHTMLParser())
+        reader = EPUBReader()
+        monkeypatch.setattr("src.file.reader.parse_html", mock_parse_html_error)
         monkeypatch.setattr(epub, "read_epub", lambda _: create_mock_epub())
 
         # Assert that the original ValueError is caught and wrapped

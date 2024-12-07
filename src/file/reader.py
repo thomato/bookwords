@@ -1,17 +1,14 @@
 from pathlib import Path
-from typing import List, Optional
+from typing import List
 
 from ebooklib import ITEM_DOCUMENT, epub
 
+from file import parse_html
 from src.core.book import Book
-from src.file.parsers import BeautifulSoupHTMLParser, HTMLParser
 from src.utils.exceptions import BookProcessingError
 
 
 class EPUBReader:
-    def __init__(self, html_parser: Optional[HTMLParser] = None):
-        self.html_parser = html_parser or BeautifulSoupHTMLParser()
-
     @staticmethod
     def supported_formats() -> List[str]:
         return [".epub"]
@@ -25,7 +22,7 @@ class EPUBReader:
             for item in book.get_items():
                 if item.get_type() == ITEM_DOCUMENT:
                     html_content = item.get_content().decode("utf-8")
-                    text = self.html_parser.extract_text(html_content)
+                    text = parse_html(html_content)
                     content.append(text)
 
             # Extract metadata
