@@ -1,12 +1,12 @@
 from pathlib import Path
-from unittest.mock import MagicMock, Mock
+from unittest.mock import MagicMock
 
 import ebooklib
 import pytest
 from ebooklib import epub
 
-from src.parsers.html_parsers import HTMLParser
-from src.readers.epub_readers import EPUBReader
+from src.file.parsers import HTMLParser
+from src.file.reader import EPUBReader
 from src.utils.exceptions import BookProcessingError
 
 
@@ -23,7 +23,9 @@ def create_mock_epub():
     mock_epub.get_metadata.side_effect = lambda dc, field: [[f"Test {field}"]]
     mock_item = MagicMock()
     mock_item.get_type.return_value = ebooklib.ITEM_DOCUMENT
-    mock_item.get_content.return_value = b"<html><body>Test content</body></html>"
+    mock_item.get_content.return_value = (
+        b"<html><body>Test content</body></html>"
+    )
     mock_epub.get_items.return_value = [mock_item]
     return mock_epub
 

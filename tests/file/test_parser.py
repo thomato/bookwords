@@ -1,4 +1,4 @@
-from parsers.html_parsers import BeautifulSoupHTMLParser
+from src.file.parsers import BeautifulSoupHTMLParser
 
 
 class TestBeautifulSoupHTMLParser:
@@ -34,7 +34,9 @@ class TestBeautifulSoupHTMLParser:
 
     def test_extract_text_from_html_with_attributes(self):
         # Arrange
-        html = '<div class="content"><p id="main">Text with attributes</p></div>'
+        html = (
+            '<div class="content"><p id="main">Text with attributes</p></div>'
+        )
 
         # Act
         result = self.parser.extract_text(html)
