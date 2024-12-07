@@ -1,43 +1,55 @@
 from pathlib import Path
-from typing import List
+from typing import Protocol
 
 from ebooklib import ITEM_DOCUMENT, epub
 
+from config import ENCODING, SUPPORTED_FORMATS
+from core.book import Book
 from file import parse_html
-from src.core.book import Book
-from src.utils.exceptions import BookProcessingError
+from utils.exceptions import BookProcessingError
 
 
-class EPUBReader:
-    @staticmethod
-    def supported_formats() -> List[str]:
-        return [".epub"]
+class BookReader(Protocol):
+    """Protocol for book readers."""
 
-    def read(self, file_path: Path) -> Book:
-        try:
-            book = epub.read_epub(str(file_path))
+    def read(self, path: Path) -> Book:
+        """Read book from file."""
 
-            # Extract and parse content
-            content = []
-            for item in book.get_items():
-                if item.get_type() == ITEM_DOCUMENT:
-                    html_content = item.get_content().decode("utf-8")
-                    text = parse_html(html_content)
-                    content.append(text)
 
-            # Extract metadata
-            title = self._get_metadata_safely(book, "title")
-            author = self._get_metadata_safely(book, "creator")
+def read_book(path: Path) -> Book:
+    """Read book from file using appropriate reader."""
+    if path.suffix not in SUPPORTED_FORMATS:
+        raise ValueError(f"Unsupported format: {path.suffix}")
 
-            return Book(title=title, author=author, content=" ".join(content))
+    try:
+        if path.suffix == ".epub":
+            return _read_epub(path)
 
-        except Exception as e:
-            raise BookProcessingError(f"Failed to process EPUB file: {str(e)}")
+    except Exception as e:
+        raise BookProcessingError(f"Failed to read book: {str(e)}", path, e)
 
-    @staticmethod
-    def _get_metadata_safely(book: epub.EpubBook, field: str) -> str:
-        """Safely extract metadata with fallback values."""
-        try:
-            return book.get_metadata("DC", field)[0][0]
-        except (IndexError, KeyError, AttributeError):
-            return f"Unknown {field}"
+
+def _read_epub(path: Path) -> Book:
+    """Read EPUB format book."""
+    book = epub.read_epub(str(path))
+    content = []
+
+    for item in book.get_items():
+        if item.get_type() == ITEM_DOCUMENT:
+            html_content = item.get_content().decode(ENCODING)
+            text = parse_html(html_content)
+            content.append(text)
+
+    return Book(
+        title=_get_metadata(book, "title", "Unknown Title"),
+        author=_get_metadata(book, "creator", "Unknown Author"),
+        content=" ".join(content),
+    )
+
+
+def _get_metadata(book: epub.EpubBook, field: str, default: str) -> str:
+    """Safely extract metadata with fallback."""
+    try:
+        return book.get_metadata("DC", field)[0][0]
+    except (IndexError, KeyError, AttributeError):
+        return default
