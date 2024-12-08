@@ -1,13 +1,24 @@
-from fastapi import FastAPI
+# from fastapi import FastAPI
+#
+# app = FastAPI()
+#
+#
+# @app.get("/")
+# async def root():
+#     return {"message": "Hello World"}
+#
+#
+# @app.get("/hello/{name}")
+# async def say_hello(name: str):
+#     return {"message": f"Hello {name}"}
+from pathlib import Path
 
-app = FastAPI()
+from processing.processor import process_book
 
+book, stats = process_book(Path("why-we-sleep.epub"))
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+for key, value in stats.items():
+    print(key, value.count)
 
-
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
+print(book.title)
+print(book.author)
